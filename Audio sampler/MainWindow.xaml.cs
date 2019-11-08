@@ -31,8 +31,6 @@ namespace Audio_sampler
 
             GraphicsWindowExample graphicsWindowExample = new GraphicsWindowExample();
 
-            ASDF.GetFonts();
-
             graphicsWindowExample.Initialize();
             graphicsWindowExample.Run();
         }

@@ -10,8 +10,8 @@ namespace Audio_sampler.Player
     {
         private static SampleLibrary instance = null;
 
-        private int selectedPage;
-        private bool useExtra = false;
+        public int selectedPage;
+        public bool useExtra = false;
 
         private ExtraSamples _extraSamples;
         public ExtraSamples ExtraSamples

@@ -1,6 +1,9 @@
-﻿using GameOverlay.Drawing;
+﻿using Audio_sampler.Player;
+using GameOverlay.Drawing;
 using GameOverlay.Windows;
 using System;
+using System.Diagnostics;
+using System.Windows.Input;
 
 namespace GameOverlayExample.Examples
 {
@@ -35,11 +38,11 @@ namespace GameOverlayExample.Examples
             _window = new GraphicsWindow(graphics) {
                 IsTopmost = true,
                 IsVisible = true,
-                FPS = 60,
-                X = 0,
-                Y = 0,
-                Width = 200,
-                Height = 200
+                FPS = 10,
+                X = 1620,
+                Y = 500,
+                Width = 300,
+                Height = 150
             };
 
             _window.SetupGraphics += _window_SetupGraphics;
@@ -63,7 +66,6 @@ namespace GameOverlayExample.Examples
 
         private void _window_SetupGraphics(object sender, SetupGraphicsEventArgs e)
         {
-
             Graphics gfx = e.Graphics;
 
             // creates a simple font with no additional style
@@ -83,14 +85,58 @@ namespace GameOverlayExample.Examples
 
         private void _window_DrawGraphics(object sender, DrawGraphicsEventArgs e)
         {
+            SampleLibrary sampleLibrary = AudioPlayer.GetInstance().SampleLibrary;
+
+            string cashTitle = string.Empty;
+            string[] cash = new string[9];
+
+            if (sampleLibrary.useExtra)
+            {
+                cashTitle = "Прочее";
+
+                for (int iter = 0; iter < 9; iter++)
+                {
+                    if((sampleLibrary.ExtraSamples.sampleCursor + iter) < sampleLibrary.ExtraSamples.Samples.Count)
+                    {
+                        cash[iter] = sampleLibrary.ExtraSamples.Samples[sampleLibrary.ExtraSamples.sampleCursor + iter].Name;
+                    }
+                    else
+                    {
+                        cash[iter] = string.Empty;
+                    }
+                    
+                }
+            }
+            else
+            {
+                cashTitle = sampleLibrary.SamplePages[sampleLibrary.selectedPage].Name;
+
+                for (int iter = 0; iter < 9; iter++)
+                {
+                    if (sampleLibrary.SamplePages[sampleLibrary.selectedPage].Pools.ContainsKey(iter+1))
+                    {
+                        cash[iter] = sampleLibrary.SamplePages[sampleLibrary.selectedPage].Pools[iter+1].Name;
+                    } else
+                    {
+                        cash[iter] = string.Empty;
+                    }                    
+                }
+            }
 
             // you do not need to call BeginScene() or EndScene()
             var gfx = e.Graphics;
 
             gfx.ClearScene(); // set the background of the scene (can be transparent)        
-            gfx.FillRoundedRectangle(_backGray, 0, 0, 200, 200, 10);
+            gfx.FillRoundedRectangle(_backGray, 0, 0, 300, 150, 10);
 
-            gfx.DrawText(_font, 16, _white, 20, 20, "test");
+            gfx.DrawText(_font, 16, _white, 10, 10, cashTitle);
+
+            var i = 0;
+            foreach(string cashSampleName in cash)
+            {
+                gfx.DrawText(_font, 12, _white, 10 + ((i % 2)) * 150, 30 + ((i / 2) + 1) * 20, cashSampleName);
+                i++;
+            }
 
         }
 

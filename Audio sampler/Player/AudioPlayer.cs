@@ -44,6 +44,8 @@ namespace Audio_sampler.Player
 
             int devId = Int32.Parse(lines[0]);
             waveOut = new WaveOutEvent() { DeviceNumber = devId };
+
+            _sampleLibrary = SampleLibrary.GetInstance();
         }
 
         public void Play(string path)

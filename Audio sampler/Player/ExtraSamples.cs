@@ -25,20 +25,34 @@ namespace Audio_sampler.Player
 
         public void NextBatch()
         {
-            sampleCursor = sampleCursor + 9;
+            if (sampleCursor + 8 < Samples.Count)
+            {
+                sampleCursor = sampleCursor + 9;
+            }
+            else
+            {
+                sampleCursor = 0;
+            }
         }
 
         public void PrevBatch()
         {
-            sampleCursor = sampleCursor - 9;
+            if (sampleCursor - 9 < 0)
+            {
+                sampleCursor = 0;
+            }
+            else
+            {
+                sampleCursor = sampleCursor - 9;
+            }
         }
 
         internal string GetSamplePath(int index)
         {
-            int pointer = sampleCursor + index;
-            if (Samples.ElementAtOrDefault(pointer - 1) != null)
+            int pointer = sampleCursor + index - 1;
+            if (Samples.ElementAtOrDefault(pointer) != null)
             {
-                return Samples[pointer - 1].Path;
+                return Samples[pointer].Path;
             } else
             {
                 return string.Empty;

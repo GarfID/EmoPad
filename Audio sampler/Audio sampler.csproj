@@ -118,7 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Overlay\GraphicsWindowExample.cs" />
-    <Compile Include="Overlay\ASDF.cs" />
     <Compile Include="Player\AudioPlayer.cs" />
     <Compile Include="Player\SamplePool.cs" />
     <Compile Include="Player\SampleLibrary.cs" />

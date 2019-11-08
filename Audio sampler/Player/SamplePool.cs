@@ -54,7 +54,7 @@ namespace Audio_sampler.Player
             
             if(directories.Length == 0)
             {
-                Name = defaultPoolNames[index];
+                Name = defaultPoolNames[index - 1];
             }
             else
             {

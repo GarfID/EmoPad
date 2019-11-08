@@ -11,14 +11,9 @@ namespace Audio_sampler.Player
         public string Name;
         public string Path;
 
-        public Sample()
-        {
-            this.Name = "test";
-            this.Path = "E:\\test.mp3";
-        }
-
         public Sample(string file)
         {
+            this.Name = file.Substring(file.LastIndexOf('\\') + 1, (file.LastIndexOf('.') - file.LastIndexOf('\\')));
             this.Path = file;
         }
 
