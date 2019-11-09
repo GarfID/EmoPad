@@ -52,12 +52,6 @@ namespace Audio_sampler.Player
         {
             if (!path.Equals(string.Empty))
             {
-                for (int n = -1; n < WaveOut.DeviceCount; n++)
-                {
-                    var caps = WaveOut.GetCapabilities(n);
-                    Console.WriteLine($"{n}: {caps.ProductName}");
-                }
-
                 Mp3FileReader reader = new Mp3FileReader(path);
                 waveOut.Stop();
                 waveOut.Init(reader);
