@@ -65,6 +65,12 @@ namespace GameOverlayExample.Examples
             _window.StartThread();
         }
 
+        public void Join()
+        {
+            _window.JoinGraphicsThread();
+            _window.JoinWindowThread();
+        }
+
         private void _window_SetupGraphics(object sender, SetupGraphicsEventArgs e)
         {
             Graphics gfx = e.Graphics;
@@ -101,13 +107,13 @@ namespace GameOverlayExample.Examples
             SampleLibrary sampleLibrary = AudioPlayer.GetInstance().SampleLibrary;
 
             string cashTitle = string.Empty;
-            string[] cash = new string[9];
+            string[] cash = new string[10];
 
             if (sampleLibrary.useExtra)
             {
                 cashTitle = "Прочее";
 
-                for (int iter = 0; iter < 9; iter++)
+                for (int iter = 0; iter < 10; iter++)
                 {
                     if((sampleLibrary.ExtraSamples.sampleCursor + modShift + iter) < sampleLibrary.ExtraSamples.Samples.Count)
                     {
@@ -124,7 +130,7 @@ namespace GameOverlayExample.Examples
             {
                 cashTitle = sampleLibrary.SamplePages[sampleLibrary.selectedPage].Name;
 
-                for (int iter = 0; iter < 9; iter++)
+                for (int iter = 0; iter < 10; iter++)
                 {
                     if (sampleLibrary.SamplePages[sampleLibrary.selectedPage].Pools.ContainsKey(modShift + iter + 1))
                     {

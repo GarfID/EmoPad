@@ -40,7 +40,7 @@ namespace Audio_sampler.Player
 
         public AudioPlayer()
         {
-            string[] lines = File.ReadAllLines(Application.StartupPath + "\\config.txt");
+            string[] lines = File.ReadAllLines(Directory.GetCurrentDirectory() + "\\config.txt");
 
             int devId = Int32.Parse(lines[0]);
             waveOut = new WaveOutEvent() { DeviceNumber = devId };

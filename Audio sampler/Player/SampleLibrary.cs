@@ -42,14 +42,14 @@ namespace Audio_sampler.Player
 
         public SampleLibrary()
         {
-            string[] directories = Directory.GetDirectories(Application.StartupPath + "\\SampleLibrary\\Pages");
+            string[] directories = Directory.GetDirectories(Directory.GetCurrentDirectory() + "\\SampleLibrary\\Pages");
 
             foreach (string directory in directories)
             {
                 SamplePages.Add(new SamplePage(directory));
             }
 
-            _extraSamples = new ExtraSamples(Application.StartupPath + "\\SampleLibrary\\Extra");
+            _extraSamples = new ExtraSamples(Directory.GetCurrentDirectory() + "\\SampleLibrary\\Extra");
         }
 
         internal void PrevPage()

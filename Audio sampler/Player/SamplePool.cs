@@ -71,7 +71,7 @@ namespace Audio_sampler.Player
 
         internal string GetSamplePath()
         {
-            return Samples[MainWindow.random.Next(Samples.Count)].Path;
+            return Samples[Audio_sampler.Application.random.Next(Samples.Count)].Path;
         }
     }
 }
