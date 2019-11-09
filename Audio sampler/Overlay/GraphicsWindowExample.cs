@@ -1,4 +1,5 @@
-﻿using Audio_sampler.Player;
+﻿using Audio_sampler.Hotkeys;
+using Audio_sampler.Player;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
 using System;
@@ -85,6 +86,18 @@ namespace GameOverlayExample.Examples
 
         private void _window_DrawGraphics(object sender, DrawGraphicsEventArgs e)
         {
+            int modShift = 0;
+
+            if(HotkeyProcessor.ModKeyAltDown)
+            {
+                modShift += 9;
+            }
+
+            if (HotkeyProcessor.ModKeyCtrlDown)
+            {
+                modShift += 18;
+            }
+
             SampleLibrary sampleLibrary = AudioPlayer.GetInstance().SampleLibrary;
 
             string cashTitle = string.Empty;
@@ -96,9 +109,9 @@ namespace GameOverlayExample.Examples
 
                 for (int iter = 0; iter < 9; iter++)
                 {
-                    if((sampleLibrary.ExtraSamples.sampleCursor + iter) < sampleLibrary.ExtraSamples.Samples.Count)
+                    if((sampleLibrary.ExtraSamples.sampleCursor + modShift + iter) < sampleLibrary.ExtraSamples.Samples.Count)
                     {
-                        cash[iter] = sampleLibrary.ExtraSamples.Samples[sampleLibrary.ExtraSamples.sampleCursor + iter].Name;
+                        cash[iter] = sampleLibrary.ExtraSamples.Samples[sampleLibrary.ExtraSamples.sampleCursor + modShift + iter].Name;
                     }
                     else
                     {
@@ -113,9 +126,9 @@ namespace GameOverlayExample.Examples
 
                 for (int iter = 0; iter < 9; iter++)
                 {
-                    if (sampleLibrary.SamplePages[sampleLibrary.selectedPage].Pools.ContainsKey(iter+1))
+                    if (sampleLibrary.SamplePages[sampleLibrary.selectedPage].Pools.ContainsKey(modShift + iter + 1))
                     {
-                        cash[iter] = sampleLibrary.SamplePages[sampleLibrary.selectedPage].Pools[iter+1].Name;
+                        cash[iter] = sampleLibrary.SamplePages[sampleLibrary.selectedPage].Pools[modShift + iter + 1].Name;
                     } else
                     {
                         cash[iter] = string.Empty;
