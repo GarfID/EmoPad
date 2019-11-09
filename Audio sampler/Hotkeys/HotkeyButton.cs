@@ -4,7 +4,7 @@ namespace Audio_sampler.Hotkeys
 {
     class HotkeyButton
     {
-        private Keys _keyCode;
+        private readonly Keys _keyCode;
 
         public Keys KeyCode
         {
@@ -13,7 +13,7 @@ namespace Audio_sampler.Hotkeys
             }
         }
 
-        private int _modKeyCode;
+        private readonly int _modKeyCode;
         public int ModKeyCode
         {
             get {

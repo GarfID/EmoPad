@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Audio_sampler.Hotkeys
 {
-    class GlobalKeyboardHookEventArgs : HandledEventArgs
+    public class GlobalKeyboardHookEventArgs : HandledEventArgs
     {
         public GlobalKeyboardHook.KeyboardState KeyboardState { get; private set; }
         public GlobalKeyboardHook.LowLevelKeyboardInputEvent KeyboardData { get; private set; }
@@ -20,7 +20,7 @@ namespace Audio_sampler.Hotkeys
     }
 
     //Based on https://gist.github.com/Stasonix
-    class GlobalKeyboardHook : IDisposable
+    public class GlobalKeyboardHook : IDisposable
     {
         public event EventHandler<GlobalKeyboardHookEventArgs> KeyboardPressed;
 

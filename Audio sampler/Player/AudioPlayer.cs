@@ -2,41 +2,18 @@
 using NAudio.Wave;
 using System;
 using System.IO;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using static Audio_sampler.Hotkeys.HotkeyProcessor;
 
 namespace Audio_sampler.Player
 {
     public class AudioPlayer
-    {
-        private static AudioPlayer _instance;
-        private static AudioPlayer Instance
-        {
-            get {
-                return _instance;
-            }
-        }
-        
-        private WaveOutEvent waveOut;
+    {     
+        private readonly WaveOutEvent waveOut;
 
         private SampleLibrary _sampleLibrary;
-        public SampleLibrary SampleLibrary
-        {
-            get {
-                return _sampleLibrary ?? (_sampleLibrary = SampleLibrary.GetInstance());
-            }
-        }
+        public SampleLibrary SampleLibrary => _sampleLibrary ?? (_sampleLibrary = SampleLibrary.Instance);
 
-        public static AudioPlayer GetInstance()
-        {
-            if (Instance == null)
-            {
-                _instance = new AudioPlayer();
-            }
-
-            return Instance;
-        }
+        private static AudioPlayer _instance;
+        public static AudioPlayer Instance => _instance ?? (_instance = new AudioPlayer());
 
         public AudioPlayer()
         {
@@ -45,7 +22,7 @@ namespace Audio_sampler.Player
             int devId = Int32.Parse(lines[0]);
             waveOut = new WaveOutEvent() { DeviceNumber = devId };
 
-            _sampleLibrary = SampleLibrary.GetInstance();
+            _sampleLibrary = SampleLibrary.Instance;
         }
 
         public void Play(string path)

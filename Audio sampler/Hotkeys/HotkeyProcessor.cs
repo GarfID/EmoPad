@@ -71,7 +71,7 @@ namespace Audio_sampler.Hotkeys
         private static HotkeyProcessor _instance;
         private static HotkeyProcessor Instance => _instance;
 
-        private AudioPlayer _player;
+        private readonly AudioPlayer _player;
         public AudioPlayer Player => _player;
 
         private GlobalKeyboardHook _globalKeyboardHook;
@@ -144,7 +144,15 @@ namespace Audio_sampler.Hotkeys
 
                 if (HotkeyMap.ContainsKey(hotkey))
                 {
-                    AudioPlayer.GetInstance().ProcessHotkey(HotkeyMap[hotkey]);
+                    if (
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
+                    )
+                    {
+
+                        AudioPlayer.Instance.ProcessHotkey(HotkeyMap[hotkey]);
+                    }
+
                     e.Handled = true;
                 }
             }
@@ -171,7 +179,7 @@ namespace Audio_sampler.Hotkeys
 
         public HotkeyProcessor()
         {
-            _player = AudioPlayer.GetInstance();
+            _player = AudioPlayer.Instance;
             Init();
         }
 
@@ -227,6 +235,8 @@ namespace Audio_sampler.Hotkeys
                     HotkeyMap.Add(hotkey, action);
                 }
             }
+
+            return;
         }
     }
 }

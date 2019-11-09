@@ -71,29 +71,21 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Hotkeys\HotkeyButton.cs" />
     <Compile Include="Hotkeys\HotkeyProcessor.cs" />
-    <Compile Include="Hotkeys\GlobalKeyboardHookEventArgs.cs" />
+    <Compile Include="Hotkeys\GlobalKeyboardHook.cs" />
     <Compile Include="Win32\User32.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="Hotkeys\MessageLoop.cs" />
-    <Compile Include="Overlay\GraphicsWindowExample.cs" />
+    <Compile Include="Overlay\Overlay.cs" />
     <Compile Include="Player\AudioPlayer.cs" />
     <Compile Include="Player\SamplePool.cs" />
     <Compile Include="Player\SampleLibrary.cs" />
@@ -122,9 +114,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

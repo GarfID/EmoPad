@@ -25,9 +25,9 @@ namespace Audio_sampler.Player
 
         public void NextBatch()
         {
-            if (sampleCursor + 8 < Samples.Count)
+            if (sampleCursor + (SampleLibrary.PAGE_SIZE - 1) < Samples.Count)
             {
-                sampleCursor = sampleCursor + 9;
+                sampleCursor += SampleLibrary.PAGE_SIZE;
             }
             else
             {
@@ -37,26 +37,26 @@ namespace Audio_sampler.Player
 
         public void PrevBatch()
         {
-            if (sampleCursor - 9 < 0)
+            if (sampleCursor - SampleLibrary.PAGE_SIZE < 0)
             {
                 sampleCursor = 0;
             }
             else
             {
-                sampleCursor = sampleCursor - 9;
+                sampleCursor -= SampleLibrary.PAGE_SIZE;
             }
         }
 
-        internal string GetSamplePath(int index)
+        internal Sample GetSample(int buttonValue)
         {
-            int pointer = sampleCursor + index - 1;
-            if (Samples.ElementAtOrDefault(pointer) != null)
-            {
-                return Samples[pointer].Path;
-            } else
-            {
-                return string.Empty;
-            }
+            var index = sampleCursor + buttonValue - 1;
+
+            return index < Samples.Count ? Samples[index] : null;
+        }
+
+        internal string GetSamplePath(int buttonValue)
+        {
+            return GetSample(buttonValue)?.Path ?? string.Empty;
         }
     }
 }

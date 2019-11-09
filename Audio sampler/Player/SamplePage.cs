@@ -35,16 +35,16 @@ namespace Audio_sampler.Player
             }
         }
 
+        public SamplePool GetSample(int index)
+        {
+            var key = index;
+
+            return Pools.ContainsKey(key) ? Pools[key] : null;
+        }
+
         public string GetSamplePath(int index)
         {
-            if (Pools.ContainsKey(index))
-            {
-                return Pools[index].GetSamplePath();
-            } 
-            else
-            {
-                return string.Empty;
-            }
+            return GetSample(index)?.GetSamplePath() ?? "";
         }
     }
 }

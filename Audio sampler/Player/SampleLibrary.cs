@@ -8,37 +8,22 @@ namespace Audio_sampler.Player
 {
     public class SampleLibrary
     {
-        private static SampleLibrary instance = null;
+        public const int DISPLAY_PAGE_SIZE = 9;
+        public const int PAGE_SIZE = 9 * 4;
+
+        private static SampleLibrary _instance;
 
         public int selectedPage;
         public bool useExtra = false;
 
-        private ExtraSamples _extraSamples;
-        public ExtraSamples ExtraSamples
-        {
-            get {
-                return _extraSamples;
-            }
-        }
+        private readonly ExtraSamples _extraSamples;
+        public ExtraSamples ExtraSamples => _extraSamples;
 
         private List<SamplePage> _samplePages;
-        public List<SamplePage> SamplePages
-        {
-            get {
-                return _samplePages ?? (_samplePages = new List<SamplePage>());
-            }
-        }
+        public List<SamplePage> SamplePages => _samplePages ?? (_samplePages = new List<SamplePage>());
+        public SamplePage CurrentSamplePage => _samplePages[selectedPage];
 
-
-        public static SampleLibrary GetInstance()
-        {
-            if (instance == null)
-            {
-                instance = new SampleLibrary();
-            }
-
-            return instance;
-        }
+        public static SampleLibrary Instance => _instance ?? (_instance = new SampleLibrary());
 
         public SampleLibrary()
         {
@@ -80,18 +65,29 @@ namespace Audio_sampler.Player
             _extraSamples.PrevBatch();
         }
 
-        internal string GetSamplePath(int index)
+        internal string GetSamplePath(int buttonValue)
         {
             if (useExtra)
             {
                 useExtra = !useExtra;
-                return ExtraSamples.GetSamplePath(index);
+                return ExtraSamples.GetSamplePath(buttonValue);
             }
             else
             {
-                return SamplePages[selectedPage].GetSamplePath(index);
+                return SamplePages[selectedPage].GetSamplePath(buttonValue);
             }
+        }
 
+        public string GetSampleName(int index)
+        {
+            if (useExtra)
+            {
+                return ExtraSamples.GetSample(index + 1)?.Name ?? "";
+            }
+            else
+            {
+                return CurrentSamplePage.GetSample(index + 1)?.Name ?? "";
+            }
         }
 
         internal void ToggleExtraPage()
