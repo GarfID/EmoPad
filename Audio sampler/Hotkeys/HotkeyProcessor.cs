@@ -65,6 +65,9 @@ namespace Audio_sampler.Hotkeys
 
     class HotkeyProcessor
     {
+        public static bool ModKeyCtrlDown = false;
+        public static bool ModKeyAltDown = false;
+
         private static HotkeyProcessor _instance;
         private static HotkeyProcessor Instance
         {
@@ -72,8 +75,6 @@ namespace Audio_sampler.Hotkeys
                 return _instance;
             }
         }
-
-
 
         [DllImport("User32.dll")]
         private static extern bool RegisterHotKey(
@@ -101,6 +102,70 @@ namespace Audio_sampler.Hotkeys
         {
             get {
                 return _player;
+            }
+        }
+
+        private GlobalKeyboardHook _globalKeyboardHook;
+
+        private void OnKeyPressed(object sender, GlobalKeyboardHookEventArgs e)
+        {
+            int ctrlKeyCode = 162;
+            int altKeyCode = 164;
+
+            int keyCode = e.KeyboardData.VirtualCode;
+            if (keyCode == ctrlKeyCode || keyCode == altKeyCode)
+            {
+                if(
+                    !HotkeyProcessor.ModKeyAltDown && 
+                    keyCode == altKeyCode && 
+                        (
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyDown
+                        )
+                    )
+                {
+                    HotkeyProcessor.ModKeyAltDown = true;
+                    Debug.WriteLine("Нажал Альт");
+                }
+
+                if (
+                    !HotkeyProcessor.ModKeyCtrlDown &&
+                    keyCode == ctrlKeyCode &&
+                        (
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyDown
+                        )
+                    )
+                {
+                    HotkeyProcessor.ModKeyCtrlDown = true;
+                    Debug.WriteLine("Нажал Контрол");
+                }
+
+                if (
+                    HotkeyProcessor.ModKeyAltDown &&
+                    keyCode == altKeyCode &&
+                        (
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyUp ||
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
+                        )
+                    )
+                {
+                    HotkeyProcessor.ModKeyAltDown = false;
+                    Debug.WriteLine("Отжал Альт");
+                }
+
+                if (
+                    HotkeyProcessor.ModKeyCtrlDown &&
+                    keyCode == ctrlKeyCode &&
+                        (
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyUp ||
+                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
+                        )
+                    )
+                {
+                    HotkeyProcessor.ModKeyCtrlDown = false;
+                    Debug.WriteLine("Отжал Контрол");
+                }               
             }
         }
 
@@ -143,6 +208,8 @@ namespace Audio_sampler.Hotkeys
         {
             _source = HwndSource.FromHwnd(helper.Handle);
             _source.AddHook(HwndHook);
+            _globalKeyboardHook = new GlobalKeyboardHook();
+            _globalKeyboardHook.KeyboardPressed += OnKeyPressed;
             RegisterHotKey();
         }
 
@@ -152,6 +219,7 @@ namespace Audio_sampler.Hotkeys
             {
                 UnregisterHotKey(hotkey.Key);
             }
+            _globalKeyboardHook?.Dispose();
             _source.RemoveHook(HwndHook);
             _source = null;
         }
