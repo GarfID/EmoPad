@@ -1,28 +1,25 @@
-﻿using Audio_sampler.Hotkeys;
-using Audio_sampler.Properties;
-using GameOverlayExample.Examples;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Audio_sampler.Hotkeys;
 
 namespace Audio_sampler
 {
-    public class App
+    public static class App
     {
-        public static Random random = new Random();
+        public static readonly Random Random = new Random();
 
         [STAThread]
         public static void Main()
         {
-            Overlay.Instance.Initialize();
-            Overlay.Instance.Run();
+            Overlay.Overlay.Instance.Run();
             MessageLoop.GetInstance().Run();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new TrayForm());
 
-            Overlay.Instance.Join();
+            Overlay.Overlay.Instance.Join();
             MessageLoop.GetInstance().Join();
 
             HotkeyProcessor.GetInstance().Close();
@@ -31,32 +28,31 @@ namespace Audio_sampler
 
     public class TrayForm : ApplicationContext
     {
-
-        private readonly NotifyIcon trayIcon;
+        private readonly NotifyIcon _trayIcon;
 
         public TrayForm()
         {
             // Create a tray icon. In this example we use a
             // standard system icon for simplicity, but you
             // can of course use your own custom icon too.
-            trayIcon = new NotifyIcon
+            _trayIcon = new NotifyIcon
             {
-                Text = "MyTrayApp",
+                Text = @"MyTrayApp",
                 Icon = new Icon(SystemIcons.Application, 40, 40),
-                ContextMenu = new ContextMenu(new MenuItem[] {
-          new MenuItem("Exit", Exit)
-        }),
-                Visible = true,
+                ContextMenu = new ContextMenu(new[]
+                {
+                    new MenuItem("Exit", Exit)
+                }),
+                Visible = true
             };
         }
 
         private void Exit(object sender, EventArgs eventArgs)
         {
-            Overlay.Instance.Stop();
+            Overlay.Overlay.Instance.Stop();
             MessageLoop.GetInstance().Stop();
-            trayIcon.Visible = false;
+            _trayIcon.Visible = false;
             Application.Exit();
         }
-
     }
 }

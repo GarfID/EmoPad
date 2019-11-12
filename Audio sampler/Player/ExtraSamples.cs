@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Audio_sampler.Player
 {
@@ -15,12 +11,9 @@ namespace Audio_sampler.Player
 
         public ExtraSamples(string root)
         {
-            string[] files = Directory.GetFiles(root);
+            var files = Directory.GetFiles(root);
 
-            foreach (string file in files)
-            {
-                Samples.Add(new Sample(file));
-            }
+            foreach (var file in files) _samples.Add(new Sample(file));
         }
 
         private int PageCount => (_samples.Count + 1) / Indexes.PageSize;

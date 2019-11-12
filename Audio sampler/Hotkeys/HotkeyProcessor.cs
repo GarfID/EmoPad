@@ -1,11 +1,9 @@
-﻿using Audio_sampler.Player;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Interop;
+using Audio_sampler.Player;
 
 namespace Audio_sampler.Hotkeys
 {
@@ -13,9 +11,7 @@ namespace Audio_sampler.Hotkeys
     public enum ModKeys : uint
     {
         ModAlt = 0x0001,
-        ModCtrl = 0x0002,
-        ModShift = 0x0003,
-        ModWin = 0x0004
+        ModCtrl = 0x0002
     }
 
     public enum HotkeyAction
@@ -26,161 +22,134 @@ namespace Audio_sampler.Hotkeys
         NextExtraPage,
         PrevExtraPage,
         PlayPool1,
-        PlayPool1_MOD_CTRL,
-        PlayPool1_MOD_ALT,
-        PlayPool1_MOD_CTRL_ALT,
+        PlayPool1ModCtrl,
+        PlayPool1ModAlt,
+        PlayPool1ModCtrlAlt,
         PlayPool2,
-        PlayPool2_MOD_CTRL,
-        PlayPool2_MOD_ALT,
-        PlayPool2_MOD_CTRL_ALT,
+        PlayPool2ModCtrl,
+        PlayPool2ModAlt,
+        PlayPool2ModCtrlAlt,
         PlayPool3,
-        PlayPool3_MOD_CTRL,
-        PlayPool3_MOD_ALT,
-        PlayPool3_MOD_CTRL_ALT,
+        PlayPool3ModCtrl,
+        PlayPool3ModAlt,
+        PlayPool3ModCtrlAlt,
         PlayPool4,
-        PlayPool4_MOD_CTRL,
-        PlayPool4_MOD_ALT,
-        PlayPool4_MOD_CTRL_ALT,
+        PlayPool4ModCtrl,
+        PlayPool4ModAlt,
+        PlayPool4ModCtrlAlt,
         PlayPool5,
-        PlayPool5_MOD_CTRL,
-        PlayPool5_MOD_ALT,
-        PlayPool5_MOD_CTRL_ALT,
+        PlayPool5ModCtrl,
+        PlayPool5ModAlt,
+        PlayPool5ModCtrlAlt,
         PlayPool6,
-        PlayPool6_MOD_CTRL,
-        PlayPool6_MOD_ALT,
-        PlayPool6_MOD_CTRL_ALT,
+        PlayPool6ModCtrl,
+        PlayPool6ModAlt,
+        PlayPool6ModCtrlAlt,
         PlayPool7,
-        PlayPool7_MOD_CTRL,
-        PlayPool7_MOD_ALT,
-        PlayPool7_MOD_CTRL_ALT,
+        PlayPool7ModCtrl,
+        PlayPool7ModAlt,
+        PlayPool7ModCtrlAlt,
         PlayPool8,
-        PlayPool8_MOD_CTRL,
-        PlayPool8_MOD_ALT,
-        PlayPool8_MOD_CTRL_ALT,
+        PlayPool8ModCtrl,
+        PlayPool8ModAlt,
+        PlayPool8ModCtrlAlt,
         PlayPool9,
-        PlayPool9_MOD_CTRL,
-        PlayPool9_MOD_ALT,
-        PlayPool9_MOD_CTRL_ALT,
+        PlayPool9ModCtrl,
+        PlayPool9ModAlt,
+        PlayPool9ModCtrlAlt
     }
 
-    class HotkeyProcessor
+    internal class HotkeyProcessor
     {
-        public static bool ModKeyCtrlDown = false;
-        public static bool ModKeyAltDown = false;
-
-        private static HotkeyProcessor _instance;
-        private static HotkeyProcessor Instance => _instance;
-
-        private readonly AudioPlayer _player;
-        public AudioPlayer Player => _player;
+        public static bool ModKeyCtrlDown;
+        public static bool ModKeyAltDown;
 
         private GlobalKeyboardHook _globalKeyboardHook;
 
+        private Dictionary<HotkeyButton, HotkeyAction> _hotkeyMap;
+
+        private HotkeyProcessor()
+        {
+            Init();
+        }
+
+        private static HotkeyProcessor Instance { get; set; }
+
+        private Dictionary<HotkeyButton, HotkeyAction> HotkeyMap =>
+            _hotkeyMap ?? (_hotkeyMap = new Dictionary<HotkeyButton, HotkeyAction>());
+
         private void OnKeyPressed(object sender, GlobalKeyboardHookEventArgs e)
         {
-            int ctrlKeyCode = 162;
-            int altKeyCode = 164;
+            const int ctrlKeyCode = 162;
+            const int altKeyCode = 164;
 
-            int keyCode = e.KeyboardData.VirtualCode;
+            var keyCode = e.KeyboardData.VirtualCode;
             if (keyCode == ctrlKeyCode || keyCode == altKeyCode)
             {
                 if (
-                    !HotkeyProcessor.ModKeyAltDown &&
+                    !ModKeyAltDown &&
                     keyCode == altKeyCode &&
-                        (
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyDown
-                        )
+                    (
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyDown
                     )
-                {
-                    HotkeyProcessor.ModKeyAltDown = true;
-                }
+                )
+                    ModKeyAltDown = true;
 
                 if (
-                    !HotkeyProcessor.ModKeyCtrlDown &&
+                    !ModKeyCtrlDown &&
                     keyCode == ctrlKeyCode &&
-                        (
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyDown
-                        )
+                    (
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyDown
                     )
-                {
-                    HotkeyProcessor.ModKeyCtrlDown = true;
-                }
+                )
+                    ModKeyCtrlDown = true;
 
                 if (
-                    HotkeyProcessor.ModKeyAltDown &&
+                    ModKeyAltDown &&
                     keyCode == altKeyCode &&
-                        (
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyUp ||
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
-                        )
+                    (
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyUp ||
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
                     )
-                {
-                    HotkeyProcessor.ModKeyAltDown = false;
-                }
+                )
+                    ModKeyAltDown = false;
 
                 if (
-                    HotkeyProcessor.ModKeyCtrlDown &&
+                    ModKeyCtrlDown &&
                     keyCode == ctrlKeyCode &&
-                        (
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyUp ||
-                            e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
-                        )
+                    (
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyUp ||
+                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
                     )
-                {
-                    HotkeyProcessor.ModKeyCtrlDown = false;
-                }
+                )
+                    ModKeyCtrlDown = false;
             }
             else
             {
-
-                ModKeys t_modCtrl = HotkeyProcessor.ModKeyCtrlDown ? ModKeys.ModCtrl : 0;
-                ModKeys t_modAlt = HotkeyProcessor.ModKeyAltDown ? ModKeys.ModAlt : 0;
-                ModKeys modKey = t_modCtrl | t_modAlt;
+                var tModCtrl = ModKeyCtrlDown ? ModKeys.ModCtrl : 0;
+                var tModAlt = ModKeyAltDown ? ModKeys.ModAlt : 0;
+                var modKey = tModCtrl | tModAlt;
 
                 Debug.WriteLine(keyCode);
-                HotkeyButton hotkey = new HotkeyButton((Keys)keyCode, (int)modKey);
+                var hotkey = new HotkeyButton((Keys) keyCode, (int) modKey);
 
-                if (HotkeyMap.ContainsKey(hotkey))
-                {
-                    if (
-                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
-                        e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
-                    )
-                    {
+                if (!HotkeyMap.ContainsKey(hotkey)) return;
+                
+                if (
+                    e.KeyboardState == GlobalKeyboardHook.KeyboardState.SysKeyDown ||
+                    e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp
+                )
+                    AudioPlayer.Instance.ProcessHotkey(HotkeyMap[hotkey]);
 
-                        AudioPlayer.Instance.ProcessHotkey(HotkeyMap[hotkey]);
-                    }
-
-                    e.Handled = true;
-                }
+                e.Handled = true;
             }
         }
 
         public static HotkeyProcessor GetInstance()
         {
-            if (Instance == null)
-            {
-                _instance = new HotkeyProcessor();
-            }
-
-            return Instance;
-        }
-
-        private Dictionary<HotkeyButton, HotkeyAction> _hotkeyMap;
-        public Dictionary<HotkeyButton, HotkeyAction> HotkeyMap
-        {
-            get
-            {
-                return _hotkeyMap ?? (_hotkeyMap = new Dictionary<HotkeyButton, HotkeyAction>());
-            }
-        }
-
-        public HotkeyProcessor()
-        {
-            _player = AudioPlayer.Instance;
-            Init();
+            return Instance ?? (Instance = new HotkeyProcessor());
         }
 
         private void Init()
@@ -197,46 +166,45 @@ namespace Audio_sampler.Hotkeys
 
         private void RegisterHotKey()
         {
-            string[] lines = File.ReadAllLines(Directory.GetCurrentDirectory() + "\\hotkeys.txt");
+            var lines = File.ReadAllLines(Directory.GetCurrentDirectory() + "\\hotkeys.txt");
 
-            foreach (String line in lines)
+            foreach (var line in lines)
             {
-                String[] record = line.Split(' ');
+                var record = line.Split(' ');
 
-                Keys key = (Keys)Enum.Parse(typeof(Keys), record[0]);
+                var key = (Keys) Enum.Parse(typeof(Keys), record[0]);
 
                 if (record[1].Contains("PlayPool"))
                 {
-                    HotkeyButton hotkey_no_mod = new HotkeyButton(key);
-                    HotkeyAction action_no_mod = (HotkeyAction)Enum.Parse(typeof(HotkeyAction), record[1]);
+                    var hotkeyNoMod = new HotkeyButton(key);
+                    var actionNoMod = (HotkeyAction) Enum.Parse(typeof(HotkeyAction), record[1]);
 
-                    HotkeyMap.Add(hotkey_no_mod, action_no_mod);
+                    HotkeyMap.Add(hotkeyNoMod, actionNoMod);
 
-                    HotkeyButton hotkey_mod_ctrl = new HotkeyButton(key, (int)ModKeys.ModCtrl);
-                    HotkeyAction action_mod_ctrl = (HotkeyAction)Enum.Parse(typeof(HotkeyAction), record[1] + "_MOD_CTRL");
+                    var hotkeyModCtrl = new HotkeyButton(key, (int) ModKeys.ModCtrl);
+                    var actionModCtrl = (HotkeyAction) Enum.Parse(typeof(HotkeyAction), record[1] + "ModCtrl");
 
-                    HotkeyMap.Add(hotkey_mod_ctrl, action_mod_ctrl);
+                    HotkeyMap.Add(hotkeyModCtrl, actionModCtrl);
 
-                    HotkeyButton hotkey_mod_alt = new HotkeyButton(key, (int)ModKeys.ModAlt);
-                    HotkeyAction action_mod_alt = (HotkeyAction)Enum.Parse(typeof(HotkeyAction), record[1] + "_MOD_ALT");
+                    var hotkeyModAlt = new HotkeyButton(key, (int) ModKeys.ModAlt);
+                    var actionModAlt = (HotkeyAction) Enum.Parse(typeof(HotkeyAction), record[1] + "ModAlt");
 
-                    HotkeyMap.Add(hotkey_mod_alt, action_mod_alt);
+                    HotkeyMap.Add(hotkeyModAlt, actionModAlt);
 
-                    HotkeyButton hotkey_mod_ctrl_alt = new HotkeyButton(key, ((int)ModKeys.ModCtrl | (int)ModKeys.ModAlt));
-                    HotkeyAction action_mod_ctrl_alt = (HotkeyAction)Enum.Parse(typeof(HotkeyAction), record[1] + "_MOD_CTRL_ALT");
+                    var hotkeyModCtrlAlt = new HotkeyButton(key, (int) ModKeys.ModCtrl | (int) ModKeys.ModAlt);
+                    var actionModCtrlAlt =
+                        (HotkeyAction) Enum.Parse(typeof(HotkeyAction), record[1] + "ModCtrlAlt");
 
-                    HotkeyMap.Add(hotkey_mod_ctrl_alt, action_mod_ctrl_alt);
+                    HotkeyMap.Add(hotkeyModCtrlAlt, actionModCtrlAlt);
                 }
                 else
                 {
-                    HotkeyButton hotkey = new HotkeyButton(key);
-                    HotkeyAction action = (HotkeyAction)Enum.Parse(typeof(HotkeyAction), record[1]);
+                    var hotkey = new HotkeyButton(key);
+                    var action = (HotkeyAction) Enum.Parse(typeof(HotkeyAction), record[1]);
 
                     HotkeyMap.Add(hotkey, action);
                 }
             }
-
-            return;
         }
     }
 }

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Audio_sampler.Player
 {
@@ -10,56 +7,49 @@ namespace Audio_sampler.Player
     {
         private static SampleLibrary _instance;
 
-        public int selectedPage;
-        public bool useExtra = false;
+        private int _selectedPage;
+        public bool UseExtra;
+        
+        private List<SamplePage> _samplePages = new List<SamplePage>();
 
-        private readonly ExtraSamples _extraSamples;
-        public ExtraSamples ExtraSamples => _extraSamples;
 
-        private List<SamplePage> _samplePages;
-        public List<SamplePage> SamplePages => _samplePages ?? (_samplePages = new List<SamplePage>());
-        public SamplePage CurrentSamplePage => _samplePages[selectedPage];
+
+        private ExtraSamples _extraSamples;
+        private ExtraSamples ExtraSamples => _extraSamples ?? (_extraSamples = new ExtraSamples(Directory.GetCurrentDirectory() + "\\SampleLibrary\\Extra"));
+
+        private List<SamplePage> SamplePages => _samplePages ?? (_samplePages = new List<SamplePage>());
+
+        public SamplePage CurrentSamplePage => _samplePages.Count < _selectedPage ? _samplePages[_selectedPage] : null;
 
         public static SampleLibrary Instance => _instance ?? (_instance = new SampleLibrary());
 
-        public SampleLibrary()
+        private SampleLibrary()
         {
-            string[] directories = Directory.GetDirectories(Directory.GetCurrentDirectory() + "\\SampleLibrary\\Pages");
+            var directories = Directory.GetDirectories(Directory.GetCurrentDirectory() + "\\SampleLibrary\\Pages");
 
-            foreach (string directory in directories)
-            {
-                SamplePages.Add(new SamplePage(directory));
-            }
-
-            _extraSamples = new ExtraSamples(Directory.GetCurrentDirectory() + "\\SampleLibrary\\Extra");
+            foreach (var directory in directories) SamplePages.Add(new SamplePage(directory));
         }
-
+        
         internal void PrevPage()
         {
-            selectedPage--;
-            if (selectedPage < 0)
-            {
-                selectedPage = SamplePages.Count - 1;
-            }
+            _selectedPage--;
+            if (_selectedPage < 0) _selectedPage = SamplePages.Count - 1;
         }
 
         internal void NextPage()
         {
-            selectedPage++;
-            if (selectedPage > SamplePages.Count - 1)
-            {
-                selectedPage = 0;
-            }
+            _selectedPage++;
+            if (_selectedPage > SamplePages.Count - 1) _selectedPage = 0;
         }
 
         internal void NextExtraPage()
         {
-            _extraSamples.NextBatch();
+            ExtraSamples.NextBatch();
         }
 
         internal void PrevExtraPage()
         {
-            _extraSamples.PrevBatch();
+            ExtraSamples.PrevBatch();
         }
 
         internal string GetSamplePath(int buttonValue)
@@ -81,7 +71,7 @@ namespace Audio_sampler.Player
 
         internal void ToggleExtraPage()
         {
-            useExtra = !useExtra;
+            UseExtra = !UseExtra;
         }
     }
 }

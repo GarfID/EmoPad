@@ -2,40 +2,26 @@
 
 namespace Audio_sampler.Hotkeys
 {
-    class HotkeyButton
+    internal class HotkeyButton
     {
-        private readonly Keys _keyCode;
-
-        public Keys KeyCode
-        {
-            get {
-                return _keyCode;
-            }
-        }
-
-        private readonly int _modKeyCode;
-        public int ModKeyCode
-        {
-            get {
-                return _modKeyCode;
-            }
-        }
-
         public HotkeyButton(Keys keyCode)
         {
-            _keyCode = keyCode;
-            _modKeyCode = 0;
+            KeyCode = keyCode;
+            ModKeyCode = 0;
         }
 
         public HotkeyButton(Keys keyCode, int modKeyCode)
         {
-            _keyCode = keyCode;
-            _modKeyCode = modKeyCode;
+            KeyCode = keyCode;
+            ModKeyCode = modKeyCode;
         }
+
+        private Keys KeyCode { get; }
+
+        private int ModKeyCode { get; }
 
         public override bool Equals(object obj)
         {
-
             return obj is HotkeyButton hotkey &&
                    KeyCode == hotkey.KeyCode &&
                    ModKeyCode == hotkey.ModKeyCode;
@@ -43,7 +29,7 @@ namespace Audio_sampler.Hotkeys
 
         public override int GetHashCode()
         {
-            int hashCode = 385333320;
+            var hashCode = 385333320;
             hashCode = hashCode * -1521134295 + KeyCode.GetHashCode();
             hashCode = hashCode * -1521134295 + ModKeyCode.GetHashCode();
             return hashCode;
