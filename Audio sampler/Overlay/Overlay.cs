@@ -1,4 +1,4 @@
-﻿using Audio_sampler.Hotkeys;
+using Audio_sampler.Hotkeys;
 using Audio_sampler.Player;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
@@ -16,10 +16,6 @@ namespace GameOverlayExample.Examples
         private readonly GraphicsWindow _window;
 
         private Font _font;
-
-        private readonly SampleLibrary _sampleLibrary = SampleLibrary.Instance;
-
-        private readonly string[] _cash = new string[SampleLibrary.DISPLAY_PAGE_SIZE];
 
         private SolidBrush _white;
         private SolidBrush _backGray;
@@ -134,8 +130,8 @@ namespace GameOverlayExample.Examples
         {
             for (int iter = 0; iter < _cash.Length; ++iter)
             {
-                string name = _sampleLibrary.GetSampleName(modShift + iter);
-                _cash[iter] = (name != "") ? $"{iter + 1}. {name}" : "";
+                var name = _sampleLibrary.GetSampleName(SampleIndex.First + modShift + iter);
+                _cash[iter] = name != "" ? $"{iter + 1}. {name}" : "";
             }
         }
 

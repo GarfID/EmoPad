@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,9 +8,6 @@ namespace Audio_sampler.Player
 {
     public class SampleLibrary
     {
-        public const int DISPLAY_PAGE_SIZE = 9;
-        public const int PAGE_SIZE = 9 * 4;
-
         private static SampleLibrary _instance;
 
         public int selectedPage;
@@ -67,27 +64,19 @@ namespace Audio_sampler.Player
 
         internal string GetSamplePath(int buttonValue)
         {
-            if (useExtra)
-            {
-                useExtra = !useExtra;
-                return ExtraSamples.GetSamplePath(buttonValue);
-            }
-            else
-            {
-                return SamplePages[selectedPage].GetSamplePath(buttonValue);
-            }
+            var value = ButtonValue.FromRaw(buttonValue);
+            if (!UseExtra) return CurrentSamplePage?.GetSamplePath(value) ?? "";
+            
+            UseExtra = !UseExtra;
+            return ExtraSamples.GetSamplePath(value);
+
         }
 
-        public string GetSampleName(int index)
+        public string GetSampleName(SampleIndex index)
         {
-            if (useExtra)
-            {
-                return ExtraSamples.GetSample(index + 1)?.Name ?? "";
-            }
-            else
-            {
-                return CurrentSamplePage.GetSample(index + 1)?.Name ?? "";
-            }
+            if (UseExtra)
+                return ExtraSamples.GetSample(index)?.Name ?? "";
+            return CurrentSamplePage?.GetSample(index).Name ?? "";
         }
 
         internal void ToggleExtraPage()

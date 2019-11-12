@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -35,16 +35,21 @@ namespace Audio_sampler.Player
             }
         }
 
-        public SamplePool GetSample(int index)
+        private SamplePool GetSample(ButtonValue value)
         {
-            var key = index;
+            var key = value.RawValue;
 
             return Pools.ContainsKey(key) ? Pools[key] : null;
         }
 
-        public string GetSamplePath(int index)
+        public SamplePool GetSample(SampleIndex index)
         {
-            return GetSample(index)?.GetSamplePath() ?? "";
+            return GetSample(index.ButtonValue);
+        }
+
+        public string GetSamplePath(ButtonValue value)
+        {
+            return GetSample(value)?.GetSamplePath() ?? "";
         }
     }
 }

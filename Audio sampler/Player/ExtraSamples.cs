@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,9 +9,9 @@ namespace Audio_sampler.Player
 {
     public class ExtraSamples
     {
-        public int sampleCursor = 0;
+        private int _samplePage;
 
-        public List<Sample> Samples = new List<Sample>();
+        private readonly List<Sample> _samples = new List<Sample>();
 
         public ExtraSamples(string root)
         {
@@ -23,40 +23,37 @@ namespace Audio_sampler.Player
             }
         }
 
+        private int PageCount => (_samples.Count + 1) / Indexes.PageSize;
+
+        private int PageOffset => _samplePage * Indexes.PageSize;
+
         public void NextBatch()
         {
-            if (sampleCursor + (SampleLibrary.PAGE_SIZE - 1) < Samples.Count)
-            {
-                sampleCursor += SampleLibrary.PAGE_SIZE;
-            }
-            else
-            {
-                sampleCursor = 0;
-            }
+            var newValue = _samplePage + 1;
+            _samplePage = newValue < PageCount ? newValue : 0;
         }
 
         public void PrevBatch()
         {
-            if (sampleCursor - SampleLibrary.PAGE_SIZE < 0)
-            {
-                sampleCursor = 0;
-            }
-            else
-            {
-                sampleCursor -= SampleLibrary.PAGE_SIZE;
-            }
+            var newValue = _samplePage - 1;
+            _samplePage = newValue >= 0 ? newValue : 0;
         }
 
-        internal Sample GetSample(int buttonValue)
+        private Sample GetSample(ButtonValue value)
         {
-            var index = sampleCursor + buttonValue - 1;
-
-            return index < Samples.Count ? Samples[index] : null;
+            return GetSample(value.SampleIndex);
         }
 
-        internal string GetSamplePath(int buttonValue)
+        internal Sample GetSample(SampleIndex index)
         {
-            return GetSample(buttonValue)?.Path ?? string.Empty;
+            var actualIndex = PageOffset + index.RawIndex;
+
+            return actualIndex < _samples.Count ? _samples[actualIndex] : null;
+        }
+
+        internal string GetSamplePath(ButtonValue value)
+        {
+            return GetSample(value)?.Path ?? string.Empty;
         }
     }
 }
